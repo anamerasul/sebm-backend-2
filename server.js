@@ -227,6 +227,38 @@ app.get('/leaderboard', async (req, res) => {
   }
 });
 
+
+
+app.get('/show-api-json', async (req, res) => {
+  const userId = '6117c0f79d972c74fd7c2f54';
+  const apiSecret = 'cd592e901587ff78a35e4f5ef85a12585f2660fee0d434d5156674be65045285';
+  const authString = userId + ':' + apiSecret;
+  const encodedAuthString = base64.encode(authString);
+
+  const config = {
+    headers: {
+      'Authorization': 'Basic ' + encodedAuthString
+    }
+  };
+
+  const apiUrl = 'https://csgo500.com/api/v1/influencer/top-wager?period=monthly';
+
+  try {
+    const response = await axios.get(apiUrl, config);
+    const leaderboardData = response.data.data;
+    
+    // Respond with the fetched data in JSON format
+    return res.status(200).json(leaderboard)
+                                
+
+      
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+
+      });
+
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
 //   console.log(`Server is running on port ${PORT}`);
