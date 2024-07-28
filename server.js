@@ -233,7 +233,7 @@ app.get('/show-api-json', async (req, res) => {
   const userId = '6117c0f79d972c74fd7c2f54';
   const apiSecret = 'cd592e901587ff78a35e4f5ef85a12585f2660fee0d434d5156674be65045285';
   const authString = userId + ':' + apiSecret;
-  const encodedAuthString = base64.encode(authString);
+  const encodedAuthString = Buffer.from(authString).toString('base64'); // Using Buffer for Base64 encoding
 
   const config = {
     headers: {
@@ -246,18 +246,26 @@ app.get('/show-api-json', async (req, res) => {
   try {
     const response = await axios.get(apiUrl, config);
     const leaderboardData = response.data.data;
-    
+
     // Respond with the fetched data in JSON format
-    return res.status(200).json(leaderboardData)
-                                
-
-      
+    return res.status(200).json(leaderboardData);
   } catch (error) {
-    console.error('Error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
+    console.error('Error:', error.message || error);
 
-      });
+    // Handle different types of errors
+    if (error.response) {
+      // Server responded with a status other than 200 range
+      return res.status(error.response.status).json({ message: error.response.data });
+    } else if (error.request) {
+      // Request was made but no response received
+      return res.status(500).json({ message: 'No response from API' });
+    } else {
+      // Other errors
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+});
+
 
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
