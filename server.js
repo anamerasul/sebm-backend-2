@@ -246,9 +246,13 @@ app.get('/show-api-json', async (req, res) => {
   try {
     const response = await axios.get(apiUrl, config);
     const leaderboardData = response.data.data;
+    const dataCount = leaderboardData.length;
 
-    // Respond with the fetched data in JSON format
-    return res.status(200).json(leaderboardData);
+    // Respond with the fetched data and the count in JSON format
+    return res.status(200).json({
+      count: dataCount,
+      data: leaderboardData
+    });
   } catch (error) {
     console.error('Error:', error.message || error);
 
