@@ -248,7 +248,7 @@ app.get('/show-api-json', async (req, res) => {
     const leaderboardData = response.data.data;
     
     // Respond with the fetched data in JSON format
-    return res.status(200).json(leaderboard)
+    return res.status(200).json(leaderboardData)
                                 
 
       
